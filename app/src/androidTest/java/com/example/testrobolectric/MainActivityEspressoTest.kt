@@ -10,9 +10,7 @@ import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.BuildConfig
 import com.example.testrobolectric.tests_search.MainActivity
@@ -49,6 +47,22 @@ class MainActivityEspressoTest {
             onView(withId(R.id.totalCountTextView))
                 .check(matches(withText("Number of results: 2957")))
         }
+    }
+
+    @Test
+    fun activityNoEmpty() {
+        onView(withId(R.id.searchEditText)).perform(click())
+        onView(withId((R.id.searchEditText))).perform(replaceText("github"), closeSoftKeyboard())
+        onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
+
+        onView(isRoot()).perform(delay())
+        onView(withId(R.id.toDetailsActivityButton)).check(
+            matches(
+                withEffectiveVisibility(
+                    Visibility.VISIBLE
+                )
+            )
+        )
     }
 
     private fun delay(): ViewAction {
