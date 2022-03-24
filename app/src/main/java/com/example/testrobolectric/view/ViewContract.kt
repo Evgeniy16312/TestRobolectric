@@ -1,3 +1,4 @@
 package com.example.testrobolectric.view
 
-interface ViewContract {}
+
+internal interface ViewContract {}
