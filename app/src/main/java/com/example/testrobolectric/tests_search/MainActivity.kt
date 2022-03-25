@@ -1,44 +1,45 @@
-package com.example.testrobolectric.view.search
+package com.example.testrobolectric.tests_search
 
-import androidx.appcompat.app.AppCompatActivity
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
-import com.example.testrobolectric.R
-import com.example.testrobolectric.model.SearchResult
-import com.example.testrobolectric.presenter.search.PresenterSearchContract
-import com.example.testrobolectric.presenter.search.SearchPresenter
-import com.example.testrobolectric.repository.GitHubApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.BuildConfig
+import com.example.testrobolectric.repository.FakeGitHubRepository
 import com.example.testrobolectric.repository.GitHubRepository
-import com.example.testrobolectric.view.details.DetailsActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.testrobolectric.repository.GitHubService
+import com.example.testrobolectric.repository.RepositoryContract
+import com.example.testrobolectric.tests_details.DetailsActivity
+import com.example.mockito.tests_search.model.SearchResult
+import com.example.testrobolectric.R
+import com.example.testrobolectric.databinding.ActivityMainBinding
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
-    private val adapter = SearchResultAdapter()
-    private val presenter: PresenterSearchContract = SearchPresenter(createRepository())
+    private lateinit var binding: ActivityMainBinding
+
+    private val adapterUsers by lazy {
+        SearchResultAdapter(results = ArrayList())
+    }
+    private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setUI()
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.onAttach(this)
-    }
-
-    fun isPresenterAttached() = presenter.isPresenterAttached()
-
     private fun setUI() {
-        toDetailsActivityButton.setOnClickListener {
-            presenter.onDetach()
+        binding.toDetailsActivityButton.setOnClickListener {
             startActivity(DetailsActivity.getIntent(this, totalCount))
         }
         setQueryListener()
@@ -46,14 +47,14 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     private fun setRecyclerView() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.adapter = adapterUsers
     }
 
     private fun setQueryListener() {
-        searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+        binding.searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = searchEditText.text.toString()
+                val query = binding.searchEditText.text.toString()
                 if (query.isNotBlank()) {
                     presenter.searchGitHub(query)
                     return@OnEditorActionListener true
@@ -70,8 +71,12 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         })
     }
 
-    private fun createRepository(): GitHubRepository {
-        return GitHubRepository(createRetrofit().create(GitHubApi::class.java))
+    private fun createRepository(): RepositoryContract {
+        return if (BuildConfig.BUILD_TYPE == FAKE) {
+            FakeGitHubRepository()
+        } else {
+            GitHubRepository(createRetrofit().create(GitHubService::class.java))
+        }
     }
 
     private fun createRetrofit(): Retrofit {
@@ -81,12 +86,18 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             .build()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun displaySearchResults(
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
+        with(binding.totalCountTextView) {
+            visibility = View.VISIBLE
+            text = String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
+        }
         this.totalCount = totalCount
-        adapter.updateResults(searchResults)
+        adapterUsers.results = searchResults
+        adapterUsers.notifyDataSetChanged()
     }
 
     override fun displayError() {
@@ -99,13 +110,14 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     override fun displayLoading(show: Boolean) {
         if (show) {
-            progressBar.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
         } else {
-            progressBar.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
         }
     }
 
     companion object {
+        const val FAKE = "FAKE"
         const val BASE_URL = "https://api.github.com"
     }
 }
