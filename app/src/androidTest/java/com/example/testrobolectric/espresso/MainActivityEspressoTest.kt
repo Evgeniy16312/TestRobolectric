@@ -1,4 +1,4 @@
-package com.example.testrobolectric
+package com.example.testrobolectric.espresso
 
 import android.view.View
 import androidx.test.core.app.ActivityScenario
@@ -13,6 +13,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.BuildConfig
+import com.example.testrobolectric.R
 import com.example.testrobolectric.tests_search.MainActivity
 import org.hamcrest.Matcher
 import org.junit.After
