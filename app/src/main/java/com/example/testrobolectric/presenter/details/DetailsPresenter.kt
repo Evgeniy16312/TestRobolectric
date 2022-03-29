@@ -1,5 +1,6 @@
 package com.example.testrobolectric.presenter.details
 
+
 import com.example.testrobolectric.view.details.ViewDetailsContract
 
 internal class DetailsPresenter internal constructor(
