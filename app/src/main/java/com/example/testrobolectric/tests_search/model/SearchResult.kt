@@ -1,8 +1,7 @@
-package com.example.testrobolectric.model
+package com.example.mockito.tests_search.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
 
 data class SearchResult(
     @SerializedName("id")
