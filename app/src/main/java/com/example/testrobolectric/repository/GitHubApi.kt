@@ -7,7 +7,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Query
 
 
-interface GitHubService {
+interface GitHubApi {
 
     @Headers("Accept: application/vnd.github.mercy-preview+json")
     @GET("search/repositories")

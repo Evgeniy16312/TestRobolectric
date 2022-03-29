@@ -12,7 +12,7 @@ import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.viewbinding.BuildConfig
+import com.example.testrobolectric.BuildConfig
 import com.example.testrobolectric.R
 import com.example.testrobolectric.tests_search.MainActivity
 import org.hamcrest.Matcher
@@ -40,7 +40,7 @@ class MainActivityEspressoTest {
         onView(isRoot()).perform(delay())
         onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2957")))
 
-        if (BuildConfig.BUILD_TYPE == MainActivity.FAKE) {
+        if (BuildConfig.TYPE == MainActivity.FAKE) {
             onView(withId(R.id.totalCountTextView))
                 .check(matches(withText("Number of results: 42")))
         } else {

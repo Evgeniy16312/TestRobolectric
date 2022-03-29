@@ -1,16 +1,18 @@
 package com.example.testrobolectric.tests_search
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mockito.tests_search.model.SearchResult
 import com.example.testrobolectric.R
-import com.example.testrobolectric.databinding.ListItemBinding
+import kotlinx.android.synthetic.main.list_item.view.*
 
-class SearchResultAdapter(
-    var results: List<SearchResult>
-) : RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder>() {
+internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder>() {
+
+    private var results: List<SearchResult> = listOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,21 +23,30 @@ class SearchResultAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
-        val item = results[position]
-        holder.bind(item)
+    override fun onBindViewHolder(
+        holder: SearchResultViewHolder,
+        position: Int
+    ) {
+        holder.bind(results[position])
     }
 
     override fun getItemCount(): Int {
         return results.size
     }
 
-    inner class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateResults(results: List<SearchResult>) {
+        this.results = results
+        notifyDataSetChanged()
+    }
 
-        private val binding = ListItemBinding.bind(itemView)
+    internal class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(searchResult: SearchResult) {
-            binding.repositoryName.text = searchResult.fullName
+            itemView.repositoryName.text = searchResult.fullName
+            itemView.repositoryName.setOnClickListener {
+                Toast.makeText(itemView.context, searchResult.fullName, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
