@@ -1,26 +1,30 @@
-package com.example.testrobolectric.view.search
+package com.example.testrobolectric.tests_search
 
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
-import com.example.testrobolectric.R
-import com.example.testrobolectric.model.SearchResult
-import com.example.testrobolectric.presenter.search.PresenterSearchContract
-import com.example.testrobolectric.presenter.search.SearchPresenter
-import com.example.testrobolectric.repository.GitHubApi
+import androidx.appcompat.app.AppCompatActivity
+import com.example.testrobolectric.repository.FakeGitHubRepository
 import com.example.testrobolectric.repository.GitHubRepository
-import com.example.testrobolectric.view.details.DetailsActivity
+import com.example.testrobolectric.repository.RepositoryContract
+import com.example.testrobolectric.tests_details.DetailsActivity
+import com.example.mockito.tests_search.model.SearchResult
+import com.example.testrobolectric.BuildConfig
+import com.example.testrobolectric.R
+import com.example.testrobolectric.repository.GitHubApi
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
+
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     private val adapter = SearchResultAdapter()
-    private val presenter: PresenterSearchContract = SearchPresenter(createRepository())
+    private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,16 +33,8 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         setUI()
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.onAttach(this)
-    }
-
-    fun isPresenterAttached() = presenter.isPresenterAttached()
-
     private fun setUI() {
         toDetailsActivityButton.setOnClickListener {
-            presenter.onDetach()
             startActivity(DetailsActivity.getIntent(this, totalCount))
         }
         setQueryListener()
@@ -70,8 +66,12 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         })
     }
 
-    private fun createRepository(): GitHubRepository {
-        return GitHubRepository(createRetrofit().create(GitHubApi::class.java))
+    private fun createRepository(): RepositoryContract {
+        return if (BuildConfig.TYPE == FAKE) {
+            FakeGitHubRepository()
+        } else {
+            GitHubRepository(createRetrofit().create(GitHubApi::class.java))
+        }
     }
 
     private fun createRetrofit(): Retrofit {
@@ -85,6 +85,12 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
+        with(totalCountTextView) {
+            visibility = View.VISIBLE
+            text =
+                String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
+        }
+
         this.totalCount = totalCount
         adapter.updateResults(searchResults)
     }
@@ -107,5 +113,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     companion object {
         const val BASE_URL = "https://api.github.com"
+        const val FAKE = "FAKE"
     }
 }

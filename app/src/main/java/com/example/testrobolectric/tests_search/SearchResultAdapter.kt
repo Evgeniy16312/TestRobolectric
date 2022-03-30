@@ -1,20 +1,19 @@
-package com.example.testrobolectric.view.search
+package com.example.testrobolectric.tests_search
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mockito.tests_search.model.SearchResult
 import com.example.testrobolectric.R
-import com.example.testrobolectric.model.SearchResult
-import com.example.testrobolectric.view.search.SearchResultAdapter.SearchResultViewHolder
 import kotlinx.android.synthetic.main.list_item.view.*
 
-internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultViewHolder>() {
+internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder>() {
 
     private var results: List<SearchResult> = listOf()
 
-    @SuppressLint("InflateParams")
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -45,6 +44,9 @@ internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultViewHolder
 
         fun bind(searchResult: SearchResult) {
             itemView.repositoryName.text = searchResult.fullName
+            itemView.repositoryName.setOnClickListener {
+                Toast.makeText(itemView.context, searchResult.fullName, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
