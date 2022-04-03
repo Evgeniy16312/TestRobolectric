@@ -1,8 +1,9 @@
 package com.example.testrobolectric.repository
 
 
-import com.example.mockito.tests_search.model.SearchResponse
-import com.example.mockito.tests_search.model.SearchResult
+import com.example.testrobolectric.tests_search.model.SearchResponse
+import com.example.testrobolectric.tests_search.model.SearchResult
+import io.reactivex.Observable
 import retrofit2.Response
 import kotlin.random.Random
 
@@ -11,9 +12,14 @@ internal class FakeGitHubRepository : RepositoryContract {
         query: String,
         callback: RepositoryCallback
     ) {
-        callback.handleGitHubResponse(Response.success(getFakeResponse()))
+        callback.handleGitHubResponse(Response.success(generateSearchResponse()))
     }
-    private fun getFakeResponse(): SearchResponse {
+
+    override fun searchGithub(query: String): Observable<SearchResponse> {
+        return Observable.just(generateSearchResponse())
+    }
+
+    private fun generateSearchResponse(): SearchResponse {
         val list: MutableList<SearchResult> = mutableListOf()
         for (index in 1..100) {
             list.add(

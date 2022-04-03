@@ -1,6 +1,6 @@
 package com.example.testrobolectric.repository
 
-import com.example.mockito.tests_search.model.SearchResponse
+import com.example.testrobolectric.tests_search.model.SearchResponse
 import retrofit2.Response
 
 interface RepositoryCallback {

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mockito.tests_search.model.SearchResult
+import com.example.testrobolectric.tests_search.model.SearchResult
 import com.example.testrobolectric.R
 import kotlinx.android.synthetic.main.list_item.view.*
 

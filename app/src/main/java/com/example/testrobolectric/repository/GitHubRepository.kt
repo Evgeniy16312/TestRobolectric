@@ -1,19 +1,22 @@
 package com.example.testrobolectric.repository
 
-import com.example.mockito.tests_search.model.SearchResponse
+import com.example.testrobolectric.tests_search.model.SearchResponse
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GitHubRepository(private val gitHubService: GitHubApi) : RepositoryContract {
-
+internal class GitHubRepository(private val gitHubApi: GitHubApi) :
+    RepositoryContract {
     override fun searchGithub(
         query: String,
         callback: RepositoryCallback
     ) {
-        val call = gitHubService.searchGithub(query)
+        val call = gitHubApi.searchGithub(query)
         call?.enqueue(object : Callback<SearchResponse?> {
-
             override fun onResponse(
                 call: Call<SearchResponse?>,
                 response: Response<SearchResponse?>
@@ -28,5 +31,11 @@ class GitHubRepository(private val gitHubService: GitHubApi) : RepositoryContrac
                 callback.handleGitHubError()
             }
         })
+    }
+
+    override fun searchGithub(query: String): Observable<SearchResponse> {
+        return gitHubApi.searchGithubRx(query)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }
