@@ -1,4 +1,4 @@
-package com.example.testrobolectric
+package com.example.testrobolectric.presenter
 
 import com.example.testrobolectric.tests_search.SchedulerProvider
 import io.reactivex.Scheduler

@@ -2,6 +2,7 @@ package com.example.testrobolectric
 
 
 
+import com.example.testrobolectric.presenter.ScheduleProviderStub
 import com.example.testrobolectric.repository.GitHubRepository
 import com.example.testrobolectric.tests_search.SearchPresenter
 import com.example.testrobolectric.tests_search.ViewSearchContract
