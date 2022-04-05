@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.testrobolectric.view.details.DetailsActivity
+import com.example.testrobolectric.tests_details.DetailsActivity
 import junit.framework.TestCase
 import org.junit.After
 import org.junit.Before

@@ -10,8 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.testrobolectric.view.details.DetailsActivity
-import com.example.testrobolectric.view.search.MainActivity
+import com.example.testrobolectric.tests_details.DetailsActivity
+import com.example.testrobolectric.tests_search.MainActivity
+
 import junit.framework.TestCase
 import org.junit.After
 import org.junit.Assert.*
@@ -63,13 +64,6 @@ class SearchPresenterTest {
     }
 
     @Test
-    fun activityButtons_AreVisible() {
-        scenario.onActivity {
-            TestCase.assertTrue(it.isPresenterAttached()) // Не придумал, как проверить, не распривачивая важные поля
-        }
-    }
-
-    @Test
     fun activityCreateIntent_NotNull() {
         val context: Context = ApplicationProvider.getApplicationContext()
         val intent = DetailsActivity.getIntent(context, 0)
@@ -90,15 +84,6 @@ class SearchPresenterTest {
             val toDetailsButton = it.findViewById<Button>(R.id.toDetailsActivityButton)
             toDetailsButton.performClick()
             TestCase.assertNotNull(it)
-        }
-    }
-
-    @Test
-    fun activityButtonToDetails_Detaching() {
-        scenario.onActivity {
-            val toDetailsButton = it.findViewById<Button>(R.id.toDetailsActivityButton)
-            toDetailsButton.performClick()
-            assertFalse(it.isPresenterAttached())
         }
     }
 

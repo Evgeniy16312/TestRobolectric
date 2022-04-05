@@ -1,8 +1,7 @@
-package com.example.testrobolectric.model
+package com.example.testrobolectric.tests_search.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
 
 data class SearchResponse(
     @SerializedName("total_count")
